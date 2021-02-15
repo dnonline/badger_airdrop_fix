@@ -24,6 +24,8 @@ from eth_abi.packed import encode_abi_packed
 from eth_utils import encode_hex
 from toolz import valfilter, valmap
 from click import secho
+import sys
+import csv
 
 DISTRIBUTOR_ADDRESS = '0x5e37996bcfF8C169e77b00D7b6e7261bbC60761e'
 
@@ -294,27 +296,46 @@ def deploy():
     MerkleDistributor.deploy(token, root, {'from': user})
 
 
+def writeCsv(out_file_name, items):
+    with open(out_file_name, mode='w') as fp:
+        csv_writer = csv.writer(fp, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(["Address", "amount"])
+        for addr, amount in items:
+            csv_writer.writerow([addr, amount])
 
 def main():
 
     print("#5 - yearn snapshot and ygov Governance")
-    yearn = get_ygov_and_snapshot_participants(out_file_name="./snapshot/yearn.json")     
+    # yearn = get_ygov_and_snapshot_participants(out_file_name="./snapshot/yearn.json") 
+    yearn = LoadJson("./snapshot/yearn.json")   
+    writeCsv("./snapshot/yearn.csv", yearn.items()) 
 
     print("#8 - Minted renBTC")
-    renbtc_mints = get_renbtc_mint(out_file_name="./snapshot/renbtc_mint.json")    
-    renbtc_mints = cleanupSnapshot(renbtc_mints, './old_snapshot/renbtcMinters.json')
+    # renbtc_mints = get_renbtc_mint(out_file_name="./snapshot/renbtc_mint.json")    
+    # renbtc_mints = cleanupSnapshot(renbtc_mints, './old_snapshot/renbtcMinters.json')
+    renbtc_mints = LoadJson("./snapshot/renbtc_mint.json")
+    writeCsv("./snapshot/renbtc_mint.csv", renbtc_mints.items())
 
     print("#10 - Curve SBTC LPs")
-    curve_sbtc_lp = get_sbtc_lps(out_file_name="./snapshot/curve_sbtclp.json")
-    curve_sbtc_lp = cleanupSnapshot(curve_sbtc_lp, './old_snapshot/sbtcLP.json')
+    # curve_sbtc_lp = get_sbtc_lps(out_file_name="./snapshot/curve_sbtclp.json")
+    # curve_sbtc_lp = cleanupSnapshot(curve_sbtc_lp, './old_snapshot/sbtcLP.json')
+    curve_sbtc_lp = LoadJson("./snapshot/curve_sbtclp.json")
+    writeCsv("./snapshot/curve_sbtclp.csv", curve_sbtc_lp.items())
 
     print("#10 - Curve renBTC  LPs")
-    curve_renbtc_lp = get_renbtc_lps(out_file_name="./snapshot/curve_renbtclp.json")    
-    curve_renbtc_lp = cleanupSnapshot(curve_renbtc_lp, './old_snapshot/renbtcLP.json')
+    # curve_renbtc_lp = get_renbtc_lps(out_file_name="./snapshot/curve_renbtclp.json")    
+    # curve_renbtc_lp = cleanupSnapshot(curve_renbtc_lp, './old_snapshot/renbtcLP.json')
+    curve_renbtc_lp = LoadJson("./snapshot/curve_renbtclp.json")
+    writeCsv("./snapshot/curve_renbtclp.csv", curve_renbtc_lp.items())
 
     print("#16 - Provided wBTC/ETH liquidity on Uniswap ")
-    uniswap = get_uniswap_lps(out_file_name="./snapshot/uniswap.json")
-    uniswap = cleanupSnapshot(uniswap, './old_snapshot/uniLP.json')
+    # uniswap = get_uniswap_lps(out_file_name="./snapshot/uniswap.json")
+    # uniswap = cleanupSnapshot(uniswap, './old_snapshot/uniLP.json')
+    uniswap = LoadJson("./snapshot/uniswap.json")
+    writeCsv("./snapshot/uniswap.csv", uniswap.items())
+
+    print("exiting early")
+    sys.exit(0)
 
     AIRDROP_AMOUNT = 12574850300000000000000
     final = Counter()

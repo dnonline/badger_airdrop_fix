@@ -101,7 +101,11 @@ def cleanupSnapshot(new_snapshot, old_fn):
     for key in old_snapshot.keys(): 
         if key in new_snapshot.keys():
             count += 1
-            del new_snapshot[key]    
+            del new_snapshot[key]  
+        checksumed_key = web3.toChecksumAddress(key)  
+        if checksumed_key in new_snapshot.keys():
+            count += 1
+            del new_snapshot[key]          
     print(f"deleted {count} addresses using {old_fn}")
     return new_snapshot
 
@@ -313,30 +317,42 @@ def main():
     print("#8 - Minted renBTC")
     # renbtc_mints = get_renbtc_mint(out_file_name="./snapshot/renbtc_mint.json")    
     # renbtc_mints = cleanupSnapshot(renbtc_mints, './old_snapshot/renbtcMinters.json')
-    old_renbtc_mints = LoadJson("./old_snapshot/renbtcMinters.json")
-    # renbtc_mints = LoadJson("./snapshot/renbtc_mint.json")
-    writeCsv("./snapshot/old_renbtc_mint.csv", old_renbtc_mints.items())
+    # old_renbtc_mints = LoadJson("./old_snapshot/renbtcMinters.json")
+    # writeCsv("./snapshot/old_renbtc_mint.csv", old_renbtc_mints.items())
+    # fix dupilcates error
+    renbtc_mints = LoadJson("./snapshot/renbtc_mint.json")
+    renbtc_mints = cleanupSnapshot(renbtc_mints, './old_snapshot/renbtcMinters.json')
+    writeCsv("./snapshot/renbtc_mint.csv", renbtc_mints.items())
 
     print("#10 - Curve SBTC LPs")
     # curve_sbtc_lp = get_sbtc_lps(out_file_name="./snapshot/curve_sbtclp.json")
     # curve_sbtc_lp = cleanupSnapshot(curve_sbtc_lp, './old_snapshot/sbtcLP.json')
-    curve_sbtc_lp = LoadJson("./old_snapshot/sbtcLP.json")
-    # curve_sbtc_lp = LoadJson("./snapshot/curve_sbtclp.json")
-    writeCsv("./snapshot/old_curve_sbtclp.csv", curve_sbtc_lp.items())
+    # curve_sbtc_lp = LoadJson("./old_snapshot/sbtcLP.json")
+    # writeCsv("./snapshot/old_curve_sbtclp.csv", curve_sbtc_lp.items())
+    # fix dupilcates error
+    curve_sbtc_lp = LoadJson("./snapshot/curve_sbtclp.json")
+    curve_sbtc_lp = cleanupSnapshot(curve_sbtc_lp, './old_snapshot/sbtcLP.json')
+    writeCsv("./snapshot/curve_sbtclp.csv", curve_sbtc_lp.items())
 
     print("#10 - Curve renBTC  LPs")
     # curve_renbtc_lp = get_renbtc_lps(out_file_name="./snapshot/curve_renbtclp.json")    
     # curve_renbtc_lp = cleanupSnapshot(curve_renbtc_lp, './old_snapshot/renbtcLP.json')
-    # curve_renbtc_lp = LoadJson("./snapshot/curve_renbtclp.json")
-    curve_renbtc_lp = LoadJson("./old_snapshot/renbtcLP.json")
-    writeCsv("./snapshot/old_curve_renbtclp.csv", curve_renbtc_lp.items())
+    # curve_renbtc_lp = LoadJson("./old_snapshot/renbtcLP.json")
+    # writeCsv("./snapshot/old_curve_renbtclp.csv", curve_renbtc_lp.items())
+    # fix dupilcates error
+    curve_renbtc_lp = LoadJson("./snapshot/curve_renbtclp.json")
+    curve_renbtc_lp = cleanupSnapshot(curve_renbtc_lp, './old_snapshot/renbtcLP.json')
+    writeCsv("./snapshot/curve_renbtclp.csv", curve_renbtc_lp.items())
 
     print("#16 - Provided wBTC/ETH liquidity on Uniswap ")
     # uniswap = get_uniswap_lps(out_file_name="./snapshot/uniswap.json")
     # uniswap = cleanupSnapshot(uniswap, './old_snapshot/uniLP.json')
-    # uniswap = LoadJson("./snapshot/uniswap.json")
-    uniswap = LoadJson("./old_snapshot/uniLP.json")
-    writeCsv("./snapshot/old_uniswap.csv", uniswap.items())
+    # uniswap = LoadJson("./old_snapshot/uniLP.json")
+    # writeCsv("./snapshot/old_uniswap.csv", uniswap.items())
+    # fix dupilcates error
+    uniswap = LoadJson("./snapshot/uniswap.json")
+    uniswap = cleanupSnapshot(uniswap, './old_snapshot/uniLP.json')
+    writeCsv("./snapshot/uniswap.csv", uniswap.items())
 
     print("exiting early")
     sys.exit(0)
